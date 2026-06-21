@@ -15,7 +15,27 @@ datasource db {
 model Session {
   id        String   @id
   sid       String   @unique
-  data      String   
-  expiresAt   DateTime
+  data      String
+  expiresAt DateTime
 }
 
+model User {
+  id         Int       @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  email      String    @unique
+  password   String
+  membership Boolean   @default(false)
+  isAdmin    Boolean   @default(false)
+  messages   Message[]
+  createdAt  DateTime  @default(now())
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  authorId  Int
+  title     String
+  body      String
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+}
