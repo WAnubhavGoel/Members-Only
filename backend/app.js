@@ -1,14 +1,14 @@
 import express from "express";
-import passport from "./session-store/passport.js";
-import { sessionMiddleware } from "./session-store/session.js";
-import { indexRouter } from "./routes/index.js";
-import { userRouter } from "./routes/user.js";
-import { messageRouter } from "./routes/message.js";
-import { authRouter } from "./routes/auth.js";
+import passport from "./src/session-store/passport.js";
+import { sessionMiddleware } from "./src/session-store/session.js";
+import { indexRouter } from "./src/routes/index.js";
+import { userRouter } from "./src/routes/user.js";
+import { messageRouter } from "./src/routes/message.js";
+import { authRouter } from "./src/routes/auth.js";
 
 const app=express();
 
-app.use(sessionMidlleware);
+app.use(sessionMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 

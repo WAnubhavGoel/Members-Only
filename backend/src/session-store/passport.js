@@ -1,10 +1,10 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import {prisma} from "../lib/prisma.js";
+import {prisma} from "../../prisma/prisma.js";
 import bcrypt from "bcryptjs";
-const verifyCallback=async (username,password,done)=>{
+const verifyCallback=async (email,password,done)=>{
     const user=await prisma.user.findUnique({
-        where:{username:username}
+        where:{email}
     });
     if(!user){
         return done(null,false);
@@ -17,7 +17,7 @@ const verifyCallback=async (username,password,done)=>{
         return done(null,false);
     }
 }
-const strategy=new LocalStrategy(verifyCallback);
+const strategy=new LocalStrategy({usernameField:"email"},verifyCallback);
 passport.use(strategy);
 passport.serializeUser((user,done)=>{
     done(null,user.id);

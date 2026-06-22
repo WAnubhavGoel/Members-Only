@@ -1,10 +1,10 @@
 import session from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import { prisma } from '../../prisma.js/prisma';
+import "dotenv/config";
+import { prisma } from '../../prisma/prisma.js';
 
 export const sessionMiddleware = session({
-  secret: "my cat",
-
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
 
