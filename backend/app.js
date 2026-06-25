@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import passport from "./src/session-store/passport.js";
 import { sessionMiddleware } from "./src/session-store/session.js";
 import { indexRouter } from "./src/routes/index.js";
@@ -7,6 +8,11 @@ import { messageRouter } from "./src/routes/message.js";
 import { authRouter } from "./src/routes/auth.js";
 
 const app=express();
+
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials: true
+}))
 
 app.use(sessionMiddleware);
 app.use(express.json());
