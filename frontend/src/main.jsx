@@ -5,6 +5,8 @@ import App from './App.jsx'
 import HomePage from './pages/HomePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import SignUpPage from './pages/SignUpPage.jsx'
+import JoinPage from './pages/JoinPage.jsx'
+import CreateMessagePage from './pages/CreateMessagePage.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import './index.css'
 
@@ -16,6 +18,8 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <SignUpPage /> },
+      { path: "join", element: <JoinPage /> },
+      { path: "create-message", element: <CreateMessagePage /> },
     ]
   }
 ])

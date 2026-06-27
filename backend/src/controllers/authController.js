@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../prisma/prisma.js";
+import passport from "passport";
 
 export const signUpUser = async (req, res, next) => {
   try {
@@ -11,18 +12,19 @@ export const signUpUser = async (req, res, next) => {
         lastName: req.body.lastName,
         email: req.body.email,
         password: pass,
+        isAdmin: req.body.isAdmin ?? false,
       },
     });
 
     req.login(newUser, (err) => {
       if (err) return next(err);
-      
+
       const safeUser = {
         id: newUser.id,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         membership: newUser.membership,
-        admin: newUser.admin,
+        admin: newUser.isAdmin,
       };
 
       return res.status(201).json({
@@ -33,24 +35,42 @@ export const signUpUser = async (req, res, next) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
-export const loginUser = (req, res) => {
-  const safeUser = {
-    id: req.user.id,
-    firstName: req.user.firstName,
-    lastName: req.user.lastName,
-    membership: req.user.membership,
-    admin: req.user.admin,
-  };
+export const loginUser = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err)
+      return res.status(500).json({ success: false, message: "Server error" });
+    if (!user)
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
 
-  return res.status(200).json({
-    success: true,
-    message: "User logged in!",
-    user: safeUser,
-  });
+    req.logIn(user, (err) => {
+      if (err)
+        return res
+          .status(500)
+          .json({ success: false, message: "Session creation failed" });
+
+      const safeUser = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        membership: user.membership,
+        isAdmin: user.isAdmin,
+      };
+
+      return res.status(200).json({
+        success: true,
+        message: "User logged in!",
+        user: safeUser,
+      });
+    });
+  })(req, res, next);
 };
 
 export const checkAuthStatus = (req, res) => {
@@ -60,7 +80,7 @@ export const checkAuthStatus = (req, res) => {
       firstName: req.user.firstName,
       lastName: req.user.lastName,
       membership: req.user.membership,
-      admin: req.user.admin,
+      isAdmin: req.user.isAdmin,
     };
     return res.status(200).json({ isAuthenticated: true, user: safeUser });
   } else {
@@ -71,6 +91,8 @@ export const checkAuthStatus = (req, res) => {
 export const logoutUser = (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-    return res.status(200).json({ success: true, message: "Successfully logged out" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Successfully logged out" });
   });
 };

@@ -1,9 +1,31 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
+import axios from '../api/axiosConfig';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get('/auth/status');
+        if (response.data.isAuthenticated) {
+          setCurrentUser(response.data.user);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        setCurrentUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ currentUser, setCurrentUser }}>

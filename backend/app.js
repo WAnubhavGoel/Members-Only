@@ -9,8 +9,12 @@ import { authRouter } from "./src/routes/auth.js";
 
 const app=express();
 
+if (process.env.NODE_ENV === "production") {
+    app.set("trust proxy", 1);
+}
+
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true
 }))
 
@@ -24,7 +28,7 @@ app.use("/api/auth",authRouter);
 app.use("/api/users",userRouter);
 app.use("/api/messages",messageRouter);
 
-const PORT=3000||process.env.PORT;
+const PORT=process.env.PORT||3000;
 
 app.listen(PORT,(error)=>{
     if(error){

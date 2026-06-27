@@ -1,4 +1,5 @@
-import { isAdmin, isMember } from "../authMiddleware/authMiddleware"
+import { isAdmin, isMember } from "../authMiddleware/authMiddleware.js"
+import { prisma } from "../../prisma/prisma.js"
 export const postMessage=async (req,res,next)=>{
     try{
         const message=await prisma.message.create({
@@ -23,45 +24,47 @@ export const postMessage=async (req,res,next)=>{
     }
 }
 
-export const getMessages=async (req,res,next)=>{
-    const messages=prisma.message.findMany({
-        include:{
-            author:{
-                select:{
-                    firstName:true,
-                    lastName:true,
+export const getMessages = async (req, res, next) => {
+    const messages = await prisma.message.findMany({
+        include: {
+            author: {
+                select: {
+                    firstName: true,
+                    lastName: true,
                 }
             }
         },
-        orderBy:{
-            createdAt:"desc"
+        orderBy: {
+            createdAt: "desc"
         }
-    })
-    if(isAdmin || isMember){
+    });
+
+    if (req.user?.isAdmin || req.user?.membership) {
         return res.status(200).json({
-            success:true,
-            message:"Got messages successfully",
-            messages:messages
-        })
+            success: true,
+            message: "Got messages successfully",
+            messages: messages
+        });
     }
-    const safeMessages=messages.map((item)=>{
-        return {
-            id:item.id,
-            title:item.title,
-            body:item.body,
-            createdAt:"Hidden",
-            author:{
-                firstName:"Anonymous",
-                lastName:"Members Only"
-            }
+
+    const safeMessages = messages.map((item) => ({
+        id: item.id,
+        title: item.title,
+        body: item.body,
+        createdAt: "Hidden",
+        author: {
+            firstName: "Anonymous",
+            lastName: "Member"
         }
-    })
+    }));
+
     return res.status(200).json({
-        success:true,
-        message:"Got messages successfully",
-        messages:safeMessages
-    })
+        success: true,
+        message: "Got messages successfully",
+        messages: safeMessages
+    });
 }
+
 export const deleteMessages=async (req,res)=>{
     try{
         const deletedMessage=await prisma.message.delete({

@@ -5,5 +5,5 @@ import {isAuth,isAdmin} from "../authMiddleware/authMiddleware.js"
 const messageRouter=Router();
 messageRouter.post("/new",isAuth,postMessage);
 messageRouter.get("/",getMessages);
-messageRouter.get("/delete/:id",isAdmin,deleteMessages);
+messageRouter.delete("/:id",isAdmin,deleteMessages);
 export {messageRouter}

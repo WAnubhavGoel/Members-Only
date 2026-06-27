@@ -2,12 +2,19 @@ import { useAuth } from '../context/AuthContext';
 
 function MessageCard({ message, onDelete }) {
   const { currentUser } = useAuth();
-  
+
+  const formattedDate =
+    message.createdAt === 'Hidden'
+      ? 'Hidden'
+      : new Date(message.createdAt).toLocaleString();
+
   return (
     <div className="message-card">
       <div className="message-header">
         <span className="author-name">
-          {message.author.firstName} {message.author.lastName} wrote:
+          {message.author
+            ? `${message.author.firstName} ${message.author.lastName} wrote:`
+            : 'Unknown wrote:'}
         </span>
         {currentUser?.isAdmin && (
           <button className="btn-delete" onClick={() => onDelete(message.id)}>
@@ -20,7 +27,7 @@ function MessageCard({ message, onDelete }) {
         <p>{message.body}</p>
       </div>
       <div className="message-footer">
-        <span className="message-date">{message.createdAt}</span>
+        <span className="message-date">{formattedDate}</span>
       </div>
     </div>
   );

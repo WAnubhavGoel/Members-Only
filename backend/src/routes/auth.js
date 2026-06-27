@@ -5,12 +5,12 @@ import {
   loginUser, 
   checkAuthStatus, 
   logoutUser 
-} from "./controllers/authController.js";
+} from "../controllers/authController.js";
 
 const authRouter = Router();
 
 authRouter.post("/sign-up", signUpUser);
-authRouter.post("/login", passport.authenticate("local"), loginUser);
+authRouter.post("/login", loginUser);
 authRouter.get("/status", checkAuthStatus);
 authRouter.post("/logout", logoutUser);
 

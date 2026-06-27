@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../api/axiosConfig';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,6 +7,7 @@ function JoinClubForm() {
   const { currentUser, setCurrentUser } = useAuth();
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,6 +15,7 @@ function JoinClubForm() {
       const response = await axios.post('/users/join', { passcode });
       if (response.data.success) {
         setCurrentUser(response.data.user);
+        navigate('/');  
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Incorrect passcode');

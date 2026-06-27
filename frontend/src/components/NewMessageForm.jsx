@@ -11,7 +11,7 @@ function NewMessageForm({ onMessageAdded }) {
     try {
       const response = await axios.post('/messages/new', { title, body });
       if (response.data.success) {
-        onMessageAdded(response.data.data);
+        onMessageAdded(response.data.messages);
         setTitle('');
         setBody('');
         setError('');
