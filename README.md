@@ -42,6 +42,9 @@ The core feature of **Members Only** is its hierarchical permissions and role-ba
 > [!NOTE]
 > **Data Obfuscation Layer**: For guests and standard registered users, the backend intercepts the message payloads and maps the author to `Anonymous Member` and the post date to `Hidden`. This sanitization occurs at the database/controller level, preventing sensitive info from reaching the client network layer.
 
+> [!TIP]
+> **Try It Out**: To test the membership upgrade functionality, you can enter the passcode **`iamamember`** on the "Join Club" page to unlock real author profiles and post timestamps.
+
 ---
 
 ## 🗄️ Database Schema
@@ -117,7 +120,7 @@ All API endpoints are prefixed with `/api` and return standardized JSON response
   * *Request Body*:
     ```json
     {
-      "passcode": "SECRET_PASSCODE"
+      "passcode": "iamamember"
     }
     ```
 
@@ -164,8 +167,8 @@ Follow these steps to run the development environment locally.
    # Express Session Secret
    SECRET="your_session_secret_key"
 
-   # Club Admission Passcode
-   SECRET_PASSCODE="your_club_secret_passcode"
+   # Club Admission Passcode (Default: "iamamember")
+   SECRET_PASSCODE="iamamember"
 
    # CORS Allow Origin
    FRONTEND_URL="http://localhost:5173"
